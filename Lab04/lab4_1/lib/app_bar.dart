@@ -12,6 +12,7 @@ class CustomAppBar extends AppBar {
     required this.onLockerPressed,
     required this.selectedIndex,
     required this.onItemTapped,
+    required int tabLength,
   }) : super(
     backgroundColor: Colors.blue,
     title: const Text(
