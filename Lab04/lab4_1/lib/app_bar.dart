@@ -6,12 +6,14 @@ class CustomAppBar extends AppBar {
   final VoidCallback onLockerPressed;
   final int selectedIndex;
   final ValueChanged<int> onItemTapped;
+  final TabController tabController;
 
   CustomAppBar({
     required this.isLocked,
     required this.onLockerPressed,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.tabController,
     required int tabLength,
   }) : super(
     backgroundColor: Colors.blue,
@@ -36,10 +38,12 @@ class CustomAppBar extends AppBar {
       child: Padding(
         padding: const EdgeInsets.all(0.0), // Adjust the padding as needed
         child: CustomTabBar(
+          tabController: tabController,
           isLocked: isLocked,
           selectedIndex: selectedIndex,
           onItemTapped: onItemTapped,
         ),
+
       ),
     ),
   );

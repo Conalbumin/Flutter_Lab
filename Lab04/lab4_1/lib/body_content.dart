@@ -18,7 +18,6 @@ class BodyContent extends StatelessWidget {
     return predefinedColors[random.nextInt(predefinedColors.length)];
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(

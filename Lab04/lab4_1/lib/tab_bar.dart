@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CustomTabBar extends StatelessWidget implements PreferredSizeWidget {
+  final TabController tabController;
   final int selectedIndex;
   final ValueChanged<int> onItemTapped;
   final bool isLocked;
 
   CustomTabBar({
+    required this.tabController,
     required this.selectedIndex,
     required this.onItemTapped,
     required this.isLocked,
@@ -36,6 +38,7 @@ class CustomTabBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return TabBar(
+      controller: tabController,
       indicatorColor: Colors.white,
       labelColor: Colors.white,
       unselectedLabelColor: Colors.grey.shade300,

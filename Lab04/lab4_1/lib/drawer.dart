@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class CustomDrawer extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemTapped;
+  final VoidCallback onDrawerItemTapped;
 
-  CustomDrawer({required this.selectedIndex, required this.onItemTapped});
+  CustomDrawer({required this.selectedIndex, required this.onItemTapped, required this.onDrawerItemTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,7 @@ class CustomDrawer extends StatelessWidget {
             selected: selectedIndex == 0,
             onTap: () {
               onItemTapped(0);
+              onDrawerItemTapped();
               Navigator.pop(context);
             },
           ),
@@ -59,6 +61,7 @@ class CustomDrawer extends StatelessWidget {
             selected: selectedIndex == 1,
             onTap: () {
               onItemTapped(1);
+              onDrawerItemTapped();
               Navigator.pop(context);
             },
           ),
@@ -67,6 +70,7 @@ class CustomDrawer extends StatelessWidget {
             selected: selectedIndex == 2,
             onTap: () {
               onItemTapped(2);
+              onDrawerItemTapped();
               Navigator.pop(context);
             },
           ),
@@ -75,6 +79,7 @@ class CustomDrawer extends StatelessWidget {
             selected: selectedIndex == 3,
             onTap: () {
               onItemTapped(3);
+              onDrawerItemTapped();
               Navigator.pop(context);
             },
           ),
