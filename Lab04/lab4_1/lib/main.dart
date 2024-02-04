@@ -99,9 +99,7 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
   }
 
   void _onPageChanged(int index) {
-    if (_pageChangeByUser) {
       _onItemTapped(index);
-    }
   }
 
   @override
@@ -118,7 +116,7 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
           },
           selectedIndex: _selectedIndex,
           onItemTapped: _onItemTapped,
-          tabController: _tabController, // Add this line
+          tabController: _tabController,
           tabLength: tabLength,
         ),
         body: PageView(

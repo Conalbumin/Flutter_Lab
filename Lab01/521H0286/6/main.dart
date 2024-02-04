@@ -19,13 +19,15 @@ class _MyAppState extends State<MyApp> {
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 50), // Add some spacing between groups
             Expanded(
               child: Column(
                 children: [
                   const Text('Align Start', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                   Container(
-                    height: 80,
+                    height: 100,
                     color: Colors.blue.shade800,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -45,7 +47,7 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   const Text('Align Center', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                   Container(
-                    height: 80,
+                    height: 100,
                     color: Colors.blue.shade800,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +67,7 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   const Text('Align End', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                   Container(
-                    height: 80,
+                    height: 100,
                     color: Colors.blue.shade800,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -85,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   const Text('Align Space Around', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                   Container(
-                    height: 80,
+                    height: 100,
                     color: Colors.blue.shade800,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -105,7 +107,7 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   const Text('Align Space Between', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                   Container(
-                    height: 80,
+                    height: 100,
                     color: Colors.blue.shade800,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,7 +127,7 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   const Text('Align Space Evenly', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                   Container(
-                    height: 80,
+                    height: 100,
                     color: Colors.blue.shade800,
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
