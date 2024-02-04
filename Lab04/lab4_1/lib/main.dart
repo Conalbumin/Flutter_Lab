@@ -70,14 +70,18 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
     setState(() {
       _selectedIndex = index;
       _pageChangeByUser = false;
+
       _pageController.animateToPage(
         _selectedIndex,
-        duration: Duration(milliseconds: 500),
-        curve: Curves.ease,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
       );
 
-      // Use _tabController to change the selected tab
-      _tabController.animateTo(index);
+      _tabController.animateTo(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     });
   }
 
@@ -99,8 +103,18 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
   }
 
   void _onPageChanged(int index) {
+    if (_pageChangeByUser) {
       _onItemTapped(index);
+      _onTabChanged();
+    } else {
+      // If page change is not by user (e.g., programmatic change),
+      // update the current index without animation to avoid conflicts
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
