@@ -57,6 +57,7 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -67,7 +68,7 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
       });
     }
   }
-  
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -86,25 +87,22 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
     setState(() {
       _isLocked = isLocked;
       int tabLength = MyApp.getTabLength(_isLocked);
-
-      if (_isLocked && _selectedIndex == 4) {
-        _onItemTapped(0);
-        DefaultTabController.of(context)?.index = 0;
+      if (_isLocked && _selectedIndex >= tabLength) {
+        // If the selected index is out of bounds, set it to the last valid index
+        _selectedIndex = tabLength - 1;
+        _pageController.jumpToPage(_selectedIndex);
       }
 
-      DefaultTabController.of(context)?.length = tabLength;
-      _tabController = TabController(length: tabLength, vsync: this);
-      _tabController.addListener(_onTabChanged);
+      _tabController..length = tabLength;
     });
   }
+
 
   void _onPageChanged(int index) {
     if (!_pageChangeByUser) {
       _tabController.animateTo(index);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
