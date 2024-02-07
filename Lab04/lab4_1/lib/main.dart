@@ -93,7 +93,7 @@ class _MyAppState extends State<_MyApp> with SingleTickerProviderStateMixin {
         _pageController.jumpToPage(_selectedIndex);
       }
 
-      _tabController..length = tabLength;
+      _tabController.length = tabLength;
     });
   }
 
