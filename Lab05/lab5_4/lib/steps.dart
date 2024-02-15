@@ -2,70 +2,71 @@ import 'package:flutter/material.dart';
 
 List<Step> getSteps(int currentStep, TextEditingController firstName,
     TextEditingController lastName, TextEditingController address,
-    TextEditingController postalCode) {
+    TextEditingController postalCode,  GlobalKey<FormState> formKey,
+    String? Function(String?)? validateFormField) {
   return [
     Step(
       state: currentStep > 0 ? StepState.complete : StepState.indexed,
       isActive: currentStep >= 0,
       title: const Text('Personal'),
-      content: Column(
-        children: <Widget>[
-          TextFormField(
-            validator: (firstName) {
-              if (firstName == null || firstName.isEmpty)
-                return 'Please enter your firstname';
-              return null;
-            },
-            controller: firstName,
-            decoration: const InputDecoration(
-              labelText: 'Firstname',
-              prefixIcon: Icon(Icons.person),
+      content: Form(
+        key: formKey,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              validator: validateFormField,
+              controller: firstName,
+              decoration: const InputDecoration(
+                labelText: 'Firstname',
+                prefixIcon: Icon(Icons.person),
+              ),
+              onChanged: (value) {
+              },
             ),
-            onChanged: (value) {
-            },
-          ),
-          TextFormField(
-            validator: (lastName) {
-              if (lastName == null || lastName.isEmpty)
-                return 'Please enter your lastname';
-              return null;
-            },
-            controller: lastName,
-            decoration: const InputDecoration(
-              labelText: 'Lastname',
-              prefixIcon: Icon(Icons.drive_file_rename_outline),
-            ),
-            onChanged: (value) {
-            },
-          )
-        ],
+            TextFormField(
+              validator: validateFormField,
+              controller: lastName,
+              decoration: const InputDecoration(
+                labelText: 'Lastname',
+                prefixIcon: Icon(Icons.drive_file_rename_outline),
+              ),
+              onChanged: (value) {
+              },
+            )
+          ],
+        ),
       ),
     ), //Personal
     Step(
       state: currentStep > 1 ? StepState.complete : StepState.indexed,
       isActive: currentStep >= 1,
       title: const Text('Shipping'),
-      content: Column(
-        children: <Widget>[
-          TextFormField(
-            controller: address,
-            decoration: const InputDecoration(
-              labelText: 'Address',
-              prefixIcon: Icon(Icons.car_repair),
+      content: Form(
+        // key: formKey,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              validator: validateFormField,
+              controller: address,
+              decoration: const InputDecoration(
+                labelText: 'Address',
+                prefixIcon: Icon(Icons.car_repair),
+              ),
+              onChanged: (value) {
+              },
             ),
-            onChanged: (value) {
-            },
-          ),
-          TextFormField(
-            controller: postalCode,
-            decoration: const InputDecoration(
-              labelText: 'Postal code',
-              prefixIcon: Icon(Icons.code),
-            ),
-            onChanged: (value) {
-            },
-          )
-        ],
+            TextFormField(
+              validator: validateFormField,
+              controller: postalCode,
+              decoration: const InputDecoration(
+                labelText: 'Postal code',
+                prefixIcon: Icon(Icons.code),
+              ),
+              onChanged: (value) {
+              },
+            )
+          ],
+        ),
       ),
     ), //Shipping
     Step(

@@ -16,11 +16,67 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final _formKey = GlobalKey<FormState>();
   int currentStep = 0;
   final firstName = TextEditingController();
   final lastName = TextEditingController();
   final address = TextEditingController();
   final postalCode = TextEditingController();
+
+  // Function to validate the form fields in Personal and Shipping steps
+  String? _validateFormField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    return null;
+  }
+
+  void _continueButtonPressed() {
+    final isLastStep = currentStep == getSteps(
+      currentStep,
+      firstName,
+      lastName,
+      address,
+      postalCode,
+      _formKey,
+      _validateFormField,
+    ).length - 1;
+
+    // Validate the form fields
+    if (_formKey.currentState!.validate()) {
+      // Proceed to the next step or handle last step logic
+      if (isLastStep) {
+        // Handle last step logic
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Thank you'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      currentStep = 0;
+                      firstName.clear();
+                      lastName.clear();
+                      address.clear();
+                      postalCode.clear();
+                      Navigator.of(context).pop();
+                    });
+                  },
+                  child: const Text('Reset'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        setState(() {
+          currentStep += 1;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,47 +95,12 @@ class _MyAppState extends State<MyApp> {
             lastName,
             address,
             postalCode,
+            _formKey,
+              _validateFormField
           ), // Call getSteps from imported file
           currentStep: currentStep,
           onStepTapped: (step) => setState(() => currentStep = step),
-          onStepContinue: () {
-            final isLastStep = currentStep == getSteps(
-              currentStep,
-              firstName,
-              lastName,
-              address,
-              postalCode,
-            ).length - 1;
-            if (isLastStep) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Thank you'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            currentStep = 0;
-                            firstName.clear();
-                            lastName.clear();
-                            address.clear();
-                            postalCode.clear();
-                            Navigator.of(context).pop();
-                          });
-                        },
-                        child: const Text('Reset'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            } else {
-              setState(() {
-                currentStep += 1;
-              });
-            }
-          },
+          onStepContinue: _continueButtonPressed,
           onStepCancel: currentStep == 0
               ? null
               : () {
@@ -95,6 +116,8 @@ class _MyAppState extends State<MyApp> {
                   lastName,
                   address,
                   postalCode,
+                  _formKey,
+                  _validateFormField,
                 ).length -
                     1;
             return Container(
