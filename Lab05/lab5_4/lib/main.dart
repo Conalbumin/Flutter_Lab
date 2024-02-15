@@ -21,6 +21,14 @@ class _MyAppState extends State<MyApp> {
   final address = TextEditingController();
   final postalCode = TextEditingController();
 
+  String _validateInputs() {
+    if(firstName.text.isEmpty) return 'Please enter first name';
+    if(lastName.text.isEmpty) return 'Please enter last name';
+    if(address.text.isEmpty) return 'Please enter address';
+    if(postalCode.text.isEmpty) return 'Please enter postal code';
+    return '';
+  }
+
   List<Step> getSteps() => [
     Step(
       state: currentStep > 0 ? StepState.complete : StepState.indexed,
@@ -29,6 +37,11 @@ class _MyAppState extends State<MyApp> {
       content: Column(
         children: <Widget>[
           TextFormField(
+            validator: (firstName) {
+              if (firstName == null || firstName.isEmpty)
+                return 'Please enter your firstname';
+              return null;
+            },
             controller: firstName,
             decoration: const InputDecoration(
               labelText: 'Firstname',
@@ -39,6 +52,11 @@ class _MyAppState extends State<MyApp> {
             },
           ),
           TextFormField(
+            validator: (lastName) {
+              if (lastName == null || lastName.isEmpty)
+                return 'Please enter your lastname';
+              return null;
+            },
             controller: lastName,
             decoration: const InputDecoration(
               labelText: 'Lastname',
@@ -50,7 +68,7 @@ class _MyAppState extends State<MyApp> {
           )
         ],
       ),
-    ),
+    ), //Personal
     Step(
       state: currentStep > 1 ? StepState.complete : StepState.indexed,
       isActive: currentStep >= 1,
@@ -79,7 +97,7 @@ class _MyAppState extends State<MyApp> {
           )
         ],
       ),
-    ),
+    ), //Shipping
     Step(
       isActive: currentStep >= 2,
       title: const Text('Confirm'),
@@ -88,35 +106,35 @@ class _MyAppState extends State<MyApp> {
         children: [
           Text(
             'Firstname: ${firstName.text}',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),
           Text(
             'Lastname: ${lastName.text}',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),
           Text(
             'Address: ${address.text}',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),
           Text(
             'Postal code: ${postalCode.text}',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
           ),
         ],
       ),
-    )
+    ) // Confirm
   ];
 
   @override
@@ -127,7 +145,7 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Theme(
         data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: Colors.blue)),
+            colorScheme: const ColorScheme.light(primary: Colors.blue)),
         child: Stepper(
           type: StepperType.horizontal,
           steps: getSteps(),
@@ -141,12 +159,6 @@ class _MyAppState extends State<MyApp> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: const Text('Thank you'),
-                    content: Text(
-                      'Firstname: ${firstName.text}\n'
-                          'Lastname: ${lastName.text}\n'
-                          'Address: ${address.text}\n'
-                          'Postal code: ${postalCode.text}',
-                    ),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
@@ -179,48 +191,32 @@ class _MyAppState extends State<MyApp> {
             });
           },
           controlsBuilder: (BuildContext context, ControlsDetails details) {
-            if (currentStep == 0) {
-              return Row(
-                children: <Widget>[
-                  TextButton(
-                    onPressed: onStepContinue,
-                    child: const Text('Next'),
-                  ),
-                ],
-              );
-            } else if (currentStep == getSteps().length - 1) {
-              return Row(
-                children: <Widget>[
-                  TextButton(
-                    onPressed: onStepContinue,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'Finish',
-                        style: TextStyle(color: Colors.white),
-                      ),
+            final isLastStep = currentStep == getSteps().length - 1;
+            return Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: details.onStepContinue,
+                    style: ElevatedButton.styleFrom(
+                      primary: isLastStep ? Colors.green : Colors.blue,
+                      onPrimary: Colors.white,
                     ),
+                    child: Text(isLastStep ? 'Finish' : 'Next'),
                   ),
+                  const SizedBox(width: 10),
+                  if (currentStep != 0)
+                    ElevatedButton(
+                      onPressed: details.onStepCancel,
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        onPrimary: Colors.white,
+                      ),
+                      child: const Text('Back'),
+                    ),
                 ],
-              );
-            } else {
-              return Row(
-                children: <Widget>[
-                  TextButton(
-                    onPressed: onStepCancel,
-                    child: const Text('Back'),
-                  ),
-                  TextButton(
-                    onPressed: onStepContinue,
-                    child: const Text('Next'),
-                  ),
-                ],
-              );
-            }
+              ),
+            );
           },
         ),
       ),
