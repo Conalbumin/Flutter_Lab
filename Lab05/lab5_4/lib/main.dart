@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'steps.dart'; // Import the steps.dart file
 
 void main() {
   runApp(const MaterialApp(
@@ -21,122 +22,6 @@ class _MyAppState extends State<MyApp> {
   final address = TextEditingController();
   final postalCode = TextEditingController();
 
-  String _validateInputs() {
-    if(firstName.text.isEmpty) return 'Please enter first name';
-    if(lastName.text.isEmpty) return 'Please enter last name';
-    if(address.text.isEmpty) return 'Please enter address';
-    if(postalCode.text.isEmpty) return 'Please enter postal code';
-    return '';
-  }
-
-  List<Step> getSteps() => [
-    Step(
-      state: currentStep > 0 ? StepState.complete : StepState.indexed,
-      isActive: currentStep >= 0,
-      title: const Text('Personal'),
-      content: Column(
-        children: <Widget>[
-          TextFormField(
-            validator: (firstName) {
-              if (firstName == null || firstName.isEmpty)
-                return 'Please enter your firstname';
-              return null;
-            },
-            controller: firstName,
-            decoration: const InputDecoration(
-              labelText: 'Firstname',
-              prefixIcon: Icon(Icons.person),
-            ),
-            onChanged: (value) {
-              setState(() {});
-            },
-          ),
-          TextFormField(
-            validator: (lastName) {
-              if (lastName == null || lastName.isEmpty)
-                return 'Please enter your lastname';
-              return null;
-            },
-            controller: lastName,
-            decoration: const InputDecoration(
-              labelText: 'Lastname',
-              prefixIcon: Icon(Icons.drive_file_rename_outline),
-            ),
-            onChanged: (value) {
-              setState(() {});
-            },
-          )
-        ],
-      ),
-    ), //Personal
-    Step(
-      state: currentStep > 1 ? StepState.complete : StepState.indexed,
-      isActive: currentStep >= 1,
-      title: const Text('Shipping'),
-      content: Column(
-        children: <Widget>[
-          TextFormField(
-            controller: address,
-            decoration: const InputDecoration(
-              labelText: 'Address',
-              prefixIcon: Icon(Icons.car_repair),
-            ),
-            onChanged: (value) {
-              setState(() {});
-            },
-          ),
-          TextFormField(
-            controller: postalCode,
-            decoration: const InputDecoration(
-              labelText: 'Postal code',
-              prefixIcon: Icon(Icons.code),
-            ),
-            onChanged: (value) {
-              setState(() {});
-            },
-          )
-        ],
-      ),
-    ), //Shipping
-    Step(
-      isActive: currentStep >= 2,
-      title: const Text('Confirm'),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Firstname: ${firstName.text}',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-          Text(
-            'Lastname: ${lastName.text}',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-          Text(
-            'Address: ${address.text}',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-          Text(
-            'Postal code: ${postalCode.text}',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ],
-      ),
-    ) // Confirm
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,11 +33,23 @@ class _MyAppState extends State<MyApp> {
             colorScheme: const ColorScheme.light(primary: Colors.blue)),
         child: Stepper(
           type: StepperType.horizontal,
-          steps: getSteps(),
+          steps: getSteps(
+            currentStep,
+            firstName,
+            lastName,
+            address,
+            postalCode,
+          ), // Call getSteps from imported file
           currentStep: currentStep,
           onStepTapped: (step) => setState(() => currentStep = step),
           onStepContinue: () {
-            final isLastStep = currentStep == getSteps().length - 1;
+            final isLastStep = currentStep == getSteps(
+              currentStep,
+              firstName,
+              lastName,
+              address,
+              postalCode,
+            ).length - 1;
             if (isLastStep) {
               showDialog(
                 context: context,
@@ -191,7 +88,15 @@ class _MyAppState extends State<MyApp> {
             });
           },
           controlsBuilder: (BuildContext context, ControlsDetails details) {
-            final isLastStep = currentStep == getSteps().length - 1;
+            final isLastStep = currentStep ==
+                getSteps(
+                  currentStep,
+                  firstName,
+                  lastName,
+                  address,
+                  postalCode,
+                ).length -
+                    1;
             return Container(
               margin: const EdgeInsets.only(top: 20),
               child: Row(
