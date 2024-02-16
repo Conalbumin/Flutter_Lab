@@ -7,11 +7,14 @@ class HomePage extends StatelessWidget {
       name: 'Product ${index + 1}',
       price: (index + 1) * 10,
       imageUrl: 'assets/toeic.png',
+      review: 'This is a good choice',
+      additionalImages: ['assets/toeic.png', 'assets/toeic.png'], // Example of providing a list of additional images
+      description: 'Add detailed description for Product ${index + 1} is here', // Provide description for each product
     );
   });
 
 
-  HomePage({super.key});
+  HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +36,12 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      backgroundColor: Colors.greenAccent.shade100,
       body: ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(products[index].name),
-            subtitle: Text('\$${products[index].price.toString()}'),
+            title: Text(products[index].name, style: const TextStyle(fontSize: 18)),
+            subtitle: Text('\$${products[index].price.toString()}', style: const TextStyle(fontSize: 15)),
             leading: CircleAvatar(
               backgroundImage: AssetImage(products[index].imageUrl),
             ),
