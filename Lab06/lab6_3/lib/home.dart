@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
 import 'product.dart';
-import 'cart.dart';
 
 class HomePage extends StatelessWidget {
-  final List<Product> products = [
-    Product(name: 'Product 1', price: 10, imageUrl: 'assets/product1.jpg'),
-    Product(name: 'Product 2', price: 20, imageUrl: 'assets/product2.jpg'),
-    Product(name: 'Product 3', price: 30, imageUrl: 'assets/product3.jpg'),
-    // Add more products here
-  ];
+  final List<Product> products = List.generate(15, (index) {
+    return Product(
+      name: 'Product ${index + 1}',
+      price: (index + 1) * 10,
+      imageUrl: 'assets/toeic.png',
+    );
+  });
+
+
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.teal,
+        centerTitle: true,
+        title: const Text(
+          'Home',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
             onPressed: () {
               Navigator.pushNamed(context, '/cart');
             },
           ),
         ],
       ),
+      backgroundColor: Colors.greenAccent.shade100,
       body: ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
@@ -37,7 +47,8 @@ class HomePage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProductDetailPage(product: products[index]),
+                  builder: (context) =>
+                      ProductDetailPage(product: products[index]),
                 ),
               );
             },

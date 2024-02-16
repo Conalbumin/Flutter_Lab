@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'product.dart';
-import 'checkout.dart';
 
 class CartPage extends StatelessWidget {
+  const CartPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.teal,
+        title: const Text('Cart', style: TextStyle(color: Colors.white),),
       ),
       body: ListView.builder(
         itemCount: Cart.items.length,
@@ -21,11 +24,12 @@ class CartPage extends StatelessWidget {
           );
         },
       ),
+      backgroundColor: Colors.greenAccent.shade100,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, '/checkout');
         },
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
       ),
     );
   }

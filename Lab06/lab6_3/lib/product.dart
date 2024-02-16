@@ -4,33 +4,36 @@ import 'cart.dart';
 class ProductDetailPage extends StatelessWidget {
   final Product product;
 
-  ProductDetailPage({required this.product});
+  const ProductDetailPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.greenAccent.shade100,
       appBar: AppBar(
-        title: Text('Product Detail'),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.teal,
+        title: const Text('Product Detail', style: TextStyle(color: Colors.white),),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(product.imageUrl),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   product.name,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   '\$${product.price.toString()}',
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: 8),
+                const Text(
                   'Description: Add detailed description here',
                   style: TextStyle(fontSize: 16),
                 ),
@@ -45,7 +48,10 @@ class ProductDetailPage extends StatelessWidget {
                 SnackBar(content: Text('${product.name} added to cart')),
               );
             },
-            child: Text('Add to Cart'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.teal), // Change the background color here
+            ),
+            child: const Text('Add to Cart', style: TextStyle(color: Colors.white),),
           ),
         ],
       ),
