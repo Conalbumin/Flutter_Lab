@@ -141,6 +141,10 @@ class _MyAppState extends State<MyApp> {
 
                     TextFormField(
                       controller: _dateController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Please enter your date of birth';
+                        return null;
+                      },
                       readOnly: true,
                       onTap: () async {
                         DateTime? picked = await selectDate(
@@ -163,6 +167,10 @@ class _MyAppState extends State<MyApp> {
 
                     TextFormField(
                       controller: _timeController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Please enter your time of birth';
+                        return null;
+                      },
                       readOnly: true,
                       onTap: () async {
                         TimeOfDay? picked = await selectTime(
@@ -184,6 +192,10 @@ class _MyAppState extends State<MyApp> {
 
                     TextFormField(
                       readOnly: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Please enter your job';
+                        return null;
+                      },
                       controller: TextEditingController(text: job),
                       onTap: () async {
                         String? selectedJob = await showJobDialog(context);
