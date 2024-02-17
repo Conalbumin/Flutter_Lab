@@ -33,29 +33,47 @@ class CartPage extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.teal,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Total: \$${Cart.getTotal().toStringAsFixed(2)}', // Format total cost to two decimal places
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-
+      bottomNavigationBar: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            flex: 3,
+            child: BottomAppBar(
+              color: Colors.teal,
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Total: \$${Cart.getTotal().toStringAsFixed(2)}',
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/checkout');
-                },
-                child: const Text('Checkout'),
               ),
-            ],
+            ),
           ),
-        ),
+          Expanded(
+            flex: 2,
+            child: BottomAppBar(
+              color: Colors.red,
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/checkout');
+                  },
+                  child: const Text(
+                    'Checkout',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
