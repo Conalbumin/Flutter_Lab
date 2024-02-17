@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var _key = GlobalKey<FormState>();
+  final _key = GlobalKey<FormState>();
   String username = '';
   String email = '';
   int age = 18;
@@ -26,8 +26,10 @@ class _MyAppState extends State<MyApp> {
   bool obscurePassword = true;
   final FocusNode _nameFocus = FocusNode();
   bool _isLoading = false;
-  TimeOfDay _selectedTime = TimeOfDay.now();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+  TimeOfDay _selectedTime = TimeOfDay.now();
 
   void _handleSubmit() {
     if (_key.currentState?.validate() ?? false) {
@@ -77,10 +79,8 @@ class _MyAppState extends State<MyApp> {
                         username = v ?? '';
                       },
                       validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please enter your username';
-                        if (value.length < 6)
-                          return 'Username must contain at least 6 characters';
+                        if (value == null || value.isEmpty) return 'Please enter your username';
+                        if (value.length < 6) return 'Username must contain at least 6 characters';
                         return null;
                       },
                       maxLines: 1,
@@ -91,17 +91,15 @@ class _MyAppState extends State<MyApp> {
                         border: OutlineInputBorder(),
                       ),
                     ), // Name
-
                     const SizedBox(height: 20),
+
                     TextFormField(
                       onSaved: (v) {
                         email = v ?? '';
                       },
                       validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please enter your email';
-                        if (!value.contains('@'))
-                          return 'This is not a valid email';
+                        if (value == null || value.isEmpty) return 'Please enter your email';
+                        if (!value.contains('@')) return 'This is not a valid email';
                         return null;
                       },
                       maxLines: 1,
@@ -124,10 +122,10 @@ class _MyAppState extends State<MyApp> {
                       },
                       decoration: const InputDecoration(
                         labelText: 'Your country',
-                        hintText: 'Choose your country',
                         border: OutlineInputBorder(),
                       ),
-                      items: countriesList.map<DropdownMenuItem<String>>((String value) {
+                      items: countriesList
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -141,113 +139,66 @@ class _MyAppState extends State<MyApp> {
                     ), // Country
                     const SizedBox(height: 20),
 
-                    GestureDetector(
-                      onTap: () {
-                        selectDate(context, _selectedDate, (DateTime date) {
+                    TextFormField(
+                      controller: _dateController,
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime? picked = await selectDate(
+                            context, _selectedDate);
+                        if (picked != null) {
                           setState(() {
-                            _selectedDate = date;
+                            _selectedDate = picked;
+                            _dateController.text = picked
+                                .toString()
+                                .split(' ')[0]; // Showing only the date part
                           });
-                        });
+                        }
                       },
-                      child: AbsorbPointer(
-                        child: DropdownButtonFormField<String>(
-                          onSaved: (value) {
-                            _selectedDate = value != null ? DateTime.parse(value) : DateTime.now(); // Assuming value is a String representation of a DateTime
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) return 'Please choose your birthday';
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Birthday',
-                            hintText: 'DD:MM:YY',
-                            border: OutlineInputBorder(),
-                          ),
-                          items: <String>[
-                            'Date Picker'
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value.toString(),
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedDate = value != null ? DateTime.parse(value) : DateTime.now(); // Assuming value is a String representation of a DateTime
-                            });
-                          },
-                        ),
-                      ),
-                    ),
+                      decoration: const InputDecoration(
+                          labelText: 'Birthday',
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.arrow_drop_down)),
+                    ), // Birthday
                     const SizedBox(height: 20),
 
-                    GestureDetector(
-                      onTap: () {
-                        selectTime(context, _selectedTime, (TimeOfDay time) {
+                    TextFormField(
+                      controller: _timeController,
+                      readOnly: true,
+                      onTap: () async {
+                        TimeOfDay? picked = await selectTime(
+                            context, _selectedTime);
+                        if (picked != null) {
                           setState(() {
-                            _selectedTime = time;
+                            _selectedTime = picked;
+                            _timeController.text =
+                                picked.format(context); // Showing the formatted time
                           });
-                        });
+                        }
                       },
-                      child: AbsorbPointer(
-                        child: DropdownButtonFormField<String>(
-                          onSaved: (value) {
-                            country = value ?? '';
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty)
-                              return 'Please choose your country';
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Birthtime',
-                            hintText: 'HH:MM',
-                            border: OutlineInputBorder(),
-                          ),
-                          items: <String>[
-                            'Time Picker'
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              country = value ?? '';
-                            });
-                          },
-                        ),
-                      ),
+                      decoration: const InputDecoration(
+                          labelText: 'Birthtime',
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.arrow_drop_down)),
                     ), // Birthtime
                     const SizedBox(height: 20),
 
-                    DropdownButtonFormField<String>(
-                      onSaved: (value) {
-                        job = value ?? '';
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return 'Please choose your job';
-                        return null;
+                    TextFormField(
+                      readOnly: true,
+                      controller: TextEditingController(text: job),
+                      onTap: () async {
+                        String? selectedJob = await showJobDialog(context);
+                        if (selectedJob != null) {
+                          setState(() {
+                            job = selectedJob;
+                          });
+                        }
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Job',
-                        hintText: 'Select your job',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: jobs.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          job = value ?? '';
-                        });
-                      },
+                          labelText: 'Job',
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.arrow_drop_down)), // Job
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
 
                     ElevatedButton(
                       onPressed: () {

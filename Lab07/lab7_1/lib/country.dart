@@ -42,24 +42,24 @@ List<String> countriesList = [
   'Sweden',
 ];
 
-Future<void> selectTime(BuildContext context, TimeOfDay initialTime, void Function(TimeOfDay) callback) async {
-  final TimeOfDay? picked = await showTimePicker(
-    context: context,
-    initialTime: initialTime,
-  );
-  if (picked != null && picked != initialTime) {
-    callback(picked);
-  }
-}
-
-Future<void> selectDate(BuildContext context, DateTime initialDate, void Function(DateTime) callback) async {
+Future<DateTime?> selectDate(BuildContext context, DateTime initialDate) async {
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: initialDate,
     firstDate: DateTime(1900),
     lastDate: DateTime.now(),
   );
-  if (picked != null && picked != initialDate) {
-    callback(picked);
+  // Extract only the date part
+  if (picked != null) {
+    return DateTime(picked.year, picked.month, picked.day);
   }
+  return null; // Return null if the user cancels the picker
+}
+
+Future<TimeOfDay> selectTime(BuildContext context, TimeOfDay initialTime) async {
+  final TimeOfDay? picked = await showTimePicker(
+    context: context,
+    initialTime: initialTime,
+  );
+  return picked ?? initialTime;
 }
