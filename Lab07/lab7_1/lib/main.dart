@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'country.dart';
+import 'job.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -20,10 +22,12 @@ class _MyAppState extends State<MyApp> {
   String email = '';
   int age = 18;
   String country = '';
-  String password = '';
+  String job = '';
   bool obscurePassword = true;
   final FocusNode _nameFocus = FocusNode();
   bool _isLoading = false;
+  TimeOfDay _selectedTime = TimeOfDay.now();
+  DateTime _selectedDate = DateTime.now();
 
   void _handleSubmit() {
     if (_key.currentState?.validate() ?? false) {
@@ -115,23 +119,15 @@ class _MyAppState extends State<MyApp> {
                         country = value ?? '';
                       },
                       validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please choose your country';
+                        if (value == null || value.isEmpty) return 'Please choose your country';
                         return null;
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Choose your country',
+                        labelText: 'Your country',
+                        hintText: 'Choose your country',
                         border: OutlineInputBorder(),
                       ),
-                      items: <String>[
-                        'USA',
-                        'Canada',
-                        'UK',
-                        'Australia',
-                        'Vietnam',
-                        'Laos',
-                        'Cambodia'
-                      ].map<DropdownMenuItem<String>>((String value) {
+                      items: countriesList.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -145,85 +141,93 @@ class _MyAppState extends State<MyApp> {
                     ), // Country
                     const SizedBox(height: 20),
 
-                    DropdownButtonFormField<String>(
-                      onSaved: (value) {
-                        country = value ?? '';
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please choose your country';
-                        return null;
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Birthday',
-                        hintText: 'DD:MM:YY',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: <String>[
-                        'USA',
-                        'Canada',
-                        'UK',
-                        'Australia',
-                        'Vietnam',
-                        'Laos',
-                        'Cambodia'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          country = value ?? '';
+                    GestureDetector(
+                      onTap: () {
+                        selectDate(context, _selectedDate, (DateTime date) {
+                          setState(() {
+                            _selectedDate = date;
+                          });
                         });
                       },
-                    ), // Birthday
+                      child: AbsorbPointer(
+                        child: DropdownButtonFormField<String>(
+                          onSaved: (value) {
+                            _selectedDate = value != null ? DateTime.parse(value) : DateTime.now(); // Assuming value is a String representation of a DateTime
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return 'Please choose your birthday';
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Birthday',
+                            hintText: 'DD:MM:YY',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: <String>[
+                            'Date Picker'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value.toString(),
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedDate = value != null ? DateTime.parse(value) : DateTime.now(); // Assuming value is a String representation of a DateTime
+                            });
+                          },
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 20),
 
-                    DropdownButtonFormField<String>(
-                      onSaved: (value) {
-                        country = value ?? '';
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please choose your country';
-                        return null;
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Birthtime',
-                        hintText: 'HH:MM',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: <String>[
-                        'USA',
-                        'Canada',
-                        'UK',
-                        'Australia',
-                        'Vietnam',
-                        'Laos',
-                        'Cambodia'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          country = value ?? '';
+                    GestureDetector(
+                      onTap: () {
+                        selectTime(context, _selectedTime, (TimeOfDay time) {
+                          setState(() {
+                            _selectedTime = time;
+                          });
                         });
                       },
+                      child: AbsorbPointer(
+                        child: DropdownButtonFormField<String>(
+                          onSaved: (value) {
+                            country = value ?? '';
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty)
+                              return 'Please choose your country';
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Birthtime',
+                            hintText: 'HH:MM',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: <String>[
+                            'Time Picker'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              country = value ?? '';
+                            });
+                          },
+                        ),
+                      ),
                     ), // Birthtime
                     const SizedBox(height: 20),
 
                     DropdownButtonFormField<String>(
                       onSaved: (value) {
-                        country = value ?? '';
+                        job = value ?? '';
                       },
                       validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please choose your country';
+                        if (value == null || value.isEmpty) return 'Please choose your job';
                         return null;
                       },
                       decoration: const InputDecoration(
@@ -231,15 +235,7 @@ class _MyAppState extends State<MyApp> {
                         hintText: 'Select your job',
                         border: OutlineInputBorder(),
                       ),
-                      items: <String>[
-                        'USA',
-                        'Canada',
-                        'UK',
-                        'Australia',
-                        'Vietnam',
-                        'Laos',
-                        'Cambodia'
-                      ].map<DropdownMenuItem<String>>((String value) {
+                      items: jobs.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -247,7 +243,7 @@ class _MyAppState extends State<MyApp> {
                       }).toList(),
                       onChanged: (String? value) {
                         setState(() {
-                          country = value ?? '';
+                          job = value ?? '';
                         });
                       },
                     ),

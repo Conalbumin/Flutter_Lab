@@ -1,0 +1,17 @@
+List<String> jobs = [
+  'Software Engineer',
+  'Registered Nurse',
+  'Marketing Specialist',
+  'Financial Advisor',
+  'Teacher',
+  'Mechanical Engineer',
+  'Graphic Designer',
+  'Sales Manager',
+  'Chef',
+  'Electrician',
+  'Lawyer',
+  'Social Worker',
+  'Architect',
+  'Pharmacist',
+  'Civil Engineer',
+];
