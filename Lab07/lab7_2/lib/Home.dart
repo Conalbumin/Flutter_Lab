@@ -16,6 +16,54 @@ class Home extends StatelessWidget {
     );
   }
 
+  Widget buildNoteTileForListView(Map<String, Object> note) {
+    bool isProtected = false;
+
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: StretchMotion(),
+        children: [
+          SlidableAction(
+            label: 'Delete',
+            onPressed: (context) {},
+            icon: Icons.delete,
+            backgroundColor: Colors.red,
+          ),
+          SlidableAction(
+            label: isProtected ? 'Unlock' : 'Protect',
+            onPressed: (context) {
+              if (isProtected) {
+                // Handle unlock action
+              } else {
+                // Handle protect action
+              }
+              isProtected = !isProtected;
+            },
+            icon: isProtected ? Icons.lock_open : Icons.lock,
+            backgroundColor: Colors.teal,
+          )
+        ],
+      ),
+      child: ListTile(
+        onTap: () async {
+          onNoteTap(note);
+        },
+        leading: const Icon(Icons.newspaper),
+        title: Text(
+          note['title'] as String,
+          style: const TextStyle(
+              color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        subtitle: Text(
+          note['content'] as String,
+          style: const TextStyle(fontSize: 15),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
   Widget buildGridView() {
     return Container(
       child: GridView.count(
@@ -53,28 +101,6 @@ class Home extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildNoteTileForListView(Map<String, Object> note) {
-    return Slidable(
-      child: ListTile(
-        onTap: () async {
-          onNoteTap(note);
-        },
-        leading: const Icon(Icons.newspaper),
-        title: Text(
-          note['title'] as String,
-          style: const TextStyle(
-              color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        subtitle: Text(
-          note['content'] as String,
-          style: const TextStyle(fontSize: 15),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
