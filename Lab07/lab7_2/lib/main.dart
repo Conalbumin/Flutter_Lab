@@ -19,6 +19,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isListView = true;
+  bool isProtected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +46,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: isListView
           ? Home(
-              notes: notes,
-              onNoteTap: (note) {
-                // Handle note tap
-              },
-            ).buildListView()
+        notes: notes,
+        onNoteTap: (note) {
+          // Handle note tap
+        },
+      ).buildListView(notes, (note) {
+        // Handle note tap
+      })
           : Home(
-              notes: notes,
-              onNoteTap: (note) {
-                // Handle note tap
-              },
-            ).buildGridView(),
+        notes: notes,
+        onNoteTap: (note) {
+          // Handle note tap
+        },
+      ).buildGridView(notes, (note) {
+        // Handle note tap
+      }),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   final List<Map<String, Object>> notes;
   final Function(Map<String, Object>) onNoteTap;
 
@@ -10,13 +10,34 @@ class Home extends StatelessWidget {
     required this.onNoteTap,
   });
 
+  @override
+  State<Home> createState() => HomeState(notes: notes, onNoteTap: onNoteTap);
+
+  Widget buildListView(List<Map<String, Object>> notes, Function(Map<String, Object>) onNoteTap) {
+    return HomeState(notes: notes, onNoteTap: onNoteTap).buildListView();
+  }
+
+  Widget buildGridView(List<Map<String, Object>> notes, Function(Map<String, Object>) onNoteTap) {
+    return HomeState(notes: notes, onNoteTap: onNoteTap).buildGridView();
+  }
+}
+
+class HomeState extends State<Home> {
+  final List<Map<String, Object>> notes;
+  final Function(Map<String, Object>) onNoteTap;
+
+  HomeState({
+    required this.notes,
+    required this.onNoteTap,
+  });
+
   Widget buildListView() {
     return ListView(
-      children: notes.map((e) => buildNoteTileForListView(e)).toList(),
+      children: notes.map((e) => _buildNoteTileForListView(e)).toList(),
     );
   }
 
-  Widget buildNoteTileForListView(Map<String, Object> note) {
+  Widget _buildNoteTileForListView(Map<String, Object> note) {
     bool isProtected = false;
 
     return Slidable(
@@ -24,18 +45,20 @@ class Home extends StatelessWidget {
         motion: StretchMotion(),
         children: [
           SlidableAction(
+            onPressed: (context) {},
+            icon: Icons.lock,
+          ),
+          SlidableAction(
             label: 'Delete',
             onPressed: (context) {},
             icon: Icons.delete,
             backgroundColor: Colors.red,
           ),
           SlidableAction(
-            label: isProtected ? 'Unlock' : 'Protect',
+            label: 'Protect',
             onPressed: (context) {
               if (isProtected) {
-                // Handle unlock action
               } else {
-                // Handle protect action
               }
               isProtected = !isProtected;
             },
@@ -65,15 +88,13 @@ class Home extends StatelessWidget {
   }
 
   Widget buildGridView() {
-    return Container(
-      child: GridView.count(
-        crossAxisCount: 2,
-        children: notes.map((e) => buildNoteTileForGridview(e)).toList(),
-      ),
+    return GridView.count(
+      crossAxisCount: 2,
+      children: notes.map((e) => _buildNoteTileForGridView(e)).toList(),
     );
   }
 
-  Widget buildNoteTileForGridview(Map<String, Object> note) {
+  Widget _buildNoteTileForGridView(Map<String, Object> note) {
     return Card(
       child: InkWell(
         onTap: () async {
