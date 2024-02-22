@@ -40,50 +40,58 @@ class HomeState extends State<Home> {
   Widget _buildNoteTileForListView(Map<String, Object> note) {
     bool isProtected = false;
 
-    return Slidable(
-      endActionPane: ActionPane(
-        motion: StretchMotion(),
-        children: [
-          SlidableAction(
-            onPressed: (context) {},
-            icon: Icons.lock,
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Slidable(
+          endActionPane: ActionPane(
+            motion: StretchMotion(),
+            children: [
+            if(isProtected == true)
+              SlidableAction(
+                onPressed: (context) {
+                },
+                icon: Icons.lock,
+              ),
+              SlidableAction(
+                label: 'Delete',
+                onPressed: (context) {},
+                icon: Icons.delete,
+                backgroundColor: Colors.red,
+              ),
+              SlidableAction(
+                label: 'Protect',
+                onPressed: (context) {
+                  setState(() {
+                    print(isProtected);
+                    isProtected = !isProtected;
+                    print(isProtected);
+
+                  });
+                },
+                icon: isProtected ? Icons.lock_open : Icons.lock,
+                backgroundColor: Colors.teal,
+              )
+            ],
           ),
-          SlidableAction(
-            label: 'Delete',
-            onPressed: (context) {},
-            icon: Icons.delete,
-            backgroundColor: Colors.red,
-          ),
-          SlidableAction(
-            label: 'Protect',
-            onPressed: (context) {
-              if (isProtected) {
-              } else {
-              }
-              isProtected = !isProtected;
+          child: ListTile(
+            onTap: () async {
+              onNoteTap(note);
             },
-            icon: isProtected ? Icons.lock_open : Icons.lock,
-            backgroundColor: Colors.teal,
-          )
-        ],
-      ),
-      child: ListTile(
-        onTap: () async {
-          onNoteTap(note);
-        },
-        leading: const Icon(Icons.newspaper),
-        title: Text(
-          note['title'] as String,
-          style: const TextStyle(
-              color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        subtitle: Text(
-          note['content'] as String,
-          style: const TextStyle(fontSize: 15),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
+            leading: const Icon(Icons.newspaper),
+            title: Text(
+              note['title'] as String,
+              style: const TextStyle(
+                  color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            subtitle: Text(
+              note['content'] as String,
+              style: const TextStyle(fontSize: 15),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        );
+      },
     );
   }
 
