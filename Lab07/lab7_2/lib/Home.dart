@@ -46,31 +46,41 @@ class HomeState extends State<Home> {
           endActionPane: ActionPane(
             motion: StretchMotion(),
             children: [
-            if(isProtected == true)
-              SlidableAction(
-                onPressed: (context) {
-                },
-                icon: Icons.lock,
-              ),
               SlidableAction(
                 label: 'Delete',
                 onPressed: (context) {},
                 icon: Icons.delete,
                 backgroundColor: Colors.red,
               ),
-              SlidableAction(
-                label: 'Protect',
-                onPressed: (context) {
-                  setState(() {
-                    print(isProtected);
-                    isProtected = !isProtected;
-                    print(isProtected);
-
-                  });
-                },
-                icon: isProtected ? Icons.lock_open : Icons.lock,
-                backgroundColor: Colors.teal,
-              )
+              if(isProtected)
+                SlidableAction(
+                  label: 'Change password',
+                  onPressed: (context) {},
+                  icon: Icons.change_circle,
+                  backgroundColor: Colors.blue,
+                ),
+              if(isProtected)
+                SlidableAction(
+                  label: 'Unlock',
+                  onPressed: (context) {
+                    setState(() {
+                      isProtected = !isProtected;
+                    });
+                  },
+                  icon: Icons.lock_open,
+                  backgroundColor: Colors.orange,
+                ),
+              if(!isProtected)
+                SlidableAction(
+                  label: 'Protect',
+                  onPressed: (context) {
+                    setState(() {
+                      isProtected = !isProtected;
+                    });
+                  },
+                  icon: Icons.lock,
+                  backgroundColor: Colors.teal,
+                )
             ],
           ),
           child: ListTile(
@@ -89,11 +99,11 @@ class HomeState extends State<Home> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
+            trailing: isProtected ? Icon(Icons.lock) : null,
           ),
         );
       },
-    );
-  }
+    );  }
 
   Widget buildGridView() {
     return GridView.count(
