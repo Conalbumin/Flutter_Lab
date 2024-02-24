@@ -44,7 +44,7 @@ class HomeState extends State<Home> {
       builder: (context, setState) {
         return Slidable(
           endActionPane: ActionPane(
-            motion: StretchMotion(),
+            motion: const StretchMotion(),
             children: [
               SlidableAction(
                 label: 'Delete',
@@ -99,7 +99,7 @@ class HomeState extends State<Home> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            trailing: isProtected ? Icon(Icons.lock) : null,
+            trailing: isProtected ? const Icon(Icons.lock) : null,
           ),
         );
       },
@@ -113,37 +113,117 @@ class HomeState extends State<Home> {
   }
 
   Widget _buildNoteTileForGridView(Map<String, Object> note) {
-    return Card(
-      child: InkWell(
-        onTap: () async {
-          onNoteTap(note);
+    return Builder(
+      builder: (context) => GestureDetector(
+        onLongPress: () {
+          print("Long press detected");
+          _showNoteOptionsBottomSheet(context, note);
         },
-        child: Container(
-          color: Colors.yellow,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                note['title'] as String,
-                style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
-                textAlign: TextAlign.center,
+        child: Card(
+          child: InkWell(
+            onTap: () async {
+              onNoteTap(note);
+            },
+            child: Container(
+              color: Colors.yellow,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    note['title'] as String,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    note['content'] as String,
+                    style: const TextStyle(fontSize: 15),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              Text(
-                note['content'] as String,
-                style: const TextStyle(fontSize: 15),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 3,
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  void _showNoteOptionsBottomSheet(BuildContext context, Map<String, Object> note) {
+    bool isProtected = false;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    _buildOptionRow(Icons.delete, "Delete this note", () {
+                      Navigator.of(context).pop();
+                      // Handle delete action here
+                    }),
+                    const Divider(), // Divider between rows
+                    if (!isProtected) // If note is not protected
+                      _buildOptionRow(Icons.lock, "Protect this note", () {
+                        setState(() {
+                          isProtected = true;
+                        });
+                      }),
+                    if (isProtected) // If note is protected
+                      _buildOptionRow(Icons.change_circle, "Change password", () {
+                        // Handle change password action here
+                      }),
+                    const Divider(), // Divider between rows
+
+                    if (isProtected) // If note is protected
+                      _buildOptionRow(Icons.lock_open, "Remove password", () {
+                        setState(() {
+                          isProtected = false;
+                        });
+                      }),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+
+  Widget _buildOptionRow(IconData icon, String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 50,
+        child: Row(
+          children: [
+            const SizedBox(width: 20),
+            Icon(icon),
+            const SizedBox(width: 20),
+            Text(text, style: const TextStyle(fontSize: 20)),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
