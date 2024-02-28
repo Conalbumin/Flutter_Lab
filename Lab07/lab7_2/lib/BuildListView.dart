@@ -4,13 +4,16 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 class BuildListView extends StatelessWidget {
   final List<Map<String, Object>> notes;
   final Function(Map<String, Object>) onNoteTap;
+  final Function(Map<String, Object>) onDeleteNote;
   bool isProtected = false;
+  final Function() onUpdateNotes;
 
   BuildListView({
     required this.notes,
     required this.onNoteTap,
+    required this.onDeleteNote,
+    required this.onUpdateNotes,
   });
-
 
   Widget _buildNoteTileForListView(Map<String, Object> note) {
     bool isProtected = false;
@@ -23,19 +26,23 @@ class BuildListView extends StatelessWidget {
             children: [
               SlidableAction(
                 label: 'Delete',
-                onPressed: (context) {},
+                onPressed: (context) {
+                  // Call onDeleteNote callback to delete the note
+                  onDeleteNote(note);
+                  // Call function to update notes list
+                  onUpdateNotes();
+                },
                 icon: Icons.delete,
                 backgroundColor: Colors.red,
               ),
-              if(isProtected)
+              if (isProtected)
                 SlidableAction(
                   label: 'Change password',
-                  onPressed: (context) {
-                  },
+                  onPressed: (context) {},
                   icon: Icons.change_circle,
                   backgroundColor: Colors.blue,
                 ),
-              if(isProtected)
+              if (isProtected)
                 SlidableAction(
                   label: 'Unlock',
                   onPressed: (context) {
@@ -46,7 +53,7 @@ class BuildListView extends StatelessWidget {
                   icon: Icons.lock_open,
                   backgroundColor: Colors.orange,
                 ),
-              if(!isProtected)
+              if (!isProtected)
                 SlidableAction(
                   label: 'Protect',
                   onPressed: (context) {
@@ -65,7 +72,9 @@ class BuildListView extends StatelessWidget {
             title: Text(
               note['title'] as String,
               style: const TextStyle(
-                  color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
             ),
             subtitle: Text(
               note['content'] as String,
@@ -77,9 +86,11 @@ class BuildListView extends StatelessWidget {
           ),
         );
       },
-    );  }
+    );
+  }
 
-  void _showDialogSetPassword(BuildContext context, Map<String, Object> note){
+  void _showDialogSetPassword(
+      BuildContext context, Map<String, Object> note) {
     TextEditingController passwordController = TextEditingController();
     TextEditingController confirmPasswordController = TextEditingController();
 
@@ -126,7 +137,7 @@ class BuildListView extends StatelessWidget {
                     if (password == confirmPassword) {
                       // Passwords match, protect the note
                       setState(() {
-                        this.isProtected = true;
+                        isProtected = true;
                       });
                       Navigator.of(context).pop();
                     } else {
@@ -144,7 +155,6 @@ class BuildListView extends StatelessWidget {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

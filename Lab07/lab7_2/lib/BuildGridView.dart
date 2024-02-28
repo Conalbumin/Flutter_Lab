@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class BuildGridView extends StatelessWidget {
   final List<Map<String, Object>> notes;
   final Function(Map<String, Object>) onNoteTap;
+  final Function(Map<String, Object>) onDeleteNote;
   bool isProtected = false;
+  final Function() onUpdateNotes;
 
   BuildGridView({
     required this.notes,
     required this.onNoteTap,
+    required this.onDeleteNote,
+    required this.onUpdateNotes,
   });
 
   @override
@@ -89,7 +93,10 @@ class BuildGridView extends StatelessWidget {
                   children: <Widget>[
                     buildOptionBottomSheet(Icons.delete, "Delete this note", () {
                       Navigator.of(context).pop();
-                      // Handle delete action here
+                      // Call onDeleteNote callback to delete the note
+                      onDeleteNote(note);
+                      // Call function to update notes list
+                      onUpdateNotes();
                     }),
                     const Divider(), // Divider between rows
                     if (!this.isProtected) // If note is not protected

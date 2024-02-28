@@ -49,6 +49,14 @@ class _MyHomePageState extends State<MyHomePage> {
         onNoteTap: (note) {
           // Handle note tap
         },
+        onDeleteNote: (note) {
+          setState(() {
+            notes.remove(note);
+          });
+        },
+        onUpdateNotes: () {
+          setState(() {});
+        },
         isListView: isListView, // Pass isListView to Home widget
       ),
       floatingActionButton: FloatingActionButton(
