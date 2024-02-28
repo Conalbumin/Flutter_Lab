@@ -44,23 +44,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: isListView
-          ? Home(
+      body: Home(
         notes: notes,
         onNoteTap: (note) {
           // Handle note tap
         },
-      ).buildListView(notes, (note) {
-        // Handle note tap
-      })
-          : Home(
-        notes: notes,
-        onNoteTap: (note) {
-          // Handle note tap
-        },
-      ).buildGridView(notes, (note) {
-        // Handle note tap
-      }),
+        isListView: isListView, // Pass isListView to Home widget
+      ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
