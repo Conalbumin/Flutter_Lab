@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 
-class BuildGridView extends StatelessWidget {
+class BuildGridView extends StatefulWidget {
   final List<Map<String, Object>> notes;
   final Function(Map<String, Object>) onNoteTap;
   final Function(Map<String, Object>) onDeleteNote;
-  bool isProtected = false;
   final Function() onUpdateNotes;
+  final Function(Map<String, Object>) onRestoreNote;
 
   BuildGridView({
     required this.notes,
     required this.onNoteTap,
     required this.onDeleteNote,
     required this.onUpdateNotes,
+    required this.onRestoreNote,
   });
+
+  @override
+  State<BuildGridView> createState() => _BuildGridViewState();
+}
+
+class _BuildGridViewState extends State<BuildGridView> {
+  bool isProtected = false;
 
   @override
   Widget build(BuildContext context) {
     return GridView.count(
       crossAxisCount: 2,
-      children: notes.map((e) => _buildNoteTileForGridView(e)).toList(),
+      children: widget.notes.map((e) => _buildNoteTileForGridView(e)).toList(),
     );
   }
 
@@ -36,7 +44,7 @@ class BuildGridView extends StatelessWidget {
             child: Card(
               child: InkWell(
                 onTap: () async {
-                  onNoteTap(note);
+                  widget.onNoteTap(note);
                 },
                 child: Container(
                   color: Colors.yellow,
@@ -93,10 +101,7 @@ class BuildGridView extends StatelessWidget {
                   children: <Widget>[
                     buildOptionBottomSheet(Icons.delete, "Delete this note", () {
                       Navigator.of(context).pop();
-                      // Call onDeleteNote callback to delete the note
-                      onDeleteNote(note);
-                      // Call function to update notes list
-                      onUpdateNotes();
+                      _showDeleteConfirmationDialog(context, note);
                     }),
                     const Divider(), // Divider between rows
                     if (!this.isProtected) // If note is not protected
@@ -209,4 +214,44 @@ class BuildGridView extends StatelessWidget {
     );
   }
 
+  void _showDeleteConfirmationDialog(BuildContext context, Map<String, Object> note) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete note"),
+          content: const Text("Are you sure you want to delete this note?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Call onDeleteNote callback to delete the note
+                widget.onDeleteNote(note);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Note deleted'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        // Restore the deleted note
+                        widget.onRestoreNote(note);
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

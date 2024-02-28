@@ -21,6 +21,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isListView = true;
   bool isProtected = false;
 
+  // Function to restore a deleted note
+  void onRestoreNote(Map<String, Object> note) {
+    setState(() {
+      notes.add(note);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onUpdateNotes: () {
           setState(() {});
         },
+        onRestoreNote: onRestoreNote,
         isListView: isListView, // Pass isListView to Home widget
       ),
       floatingActionButton: FloatingActionButton(

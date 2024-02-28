@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class BuildListView extends StatelessWidget {
+class BuildListView extends StatefulWidget {
   final List<Map<String, Object>> notes;
   final Function(Map<String, Object>) onNoteTap;
   final Function(Map<String, Object>) onDeleteNote;
-  bool isProtected = false;
   final Function() onUpdateNotes;
+  final Function(Map<String, Object>) onRestoreNote;
 
   BuildListView({
     required this.notes,
     required this.onNoteTap,
     required this.onDeleteNote,
     required this.onUpdateNotes,
+    required this.onRestoreNote,
   });
 
-  Widget _buildNoteTileForListView(Map<String, Object> note) {
-    bool isProtected = false;
+  @override
+  _BuildListViewState createState() => _BuildListViewState();
+}
 
+class _BuildListViewState extends State<BuildListView> {
+  bool isProtected = false;
+
+  Widget _buildNoteTileForListView(Map<String, Object> note) {
     return StatefulBuilder(
       builder: (context, setState) {
         return Slidable(
@@ -27,10 +33,7 @@ class BuildListView extends StatelessWidget {
               SlidableAction(
                 label: 'Delete',
                 onPressed: (context) {
-                  // Call onDeleteNote callback to delete the note
-                  onDeleteNote(note);
-                  // Call function to update notes list
-                  onUpdateNotes();
+                  _showDeleteConfirmationDialog(context, note);
                 },
                 icon: Icons.delete,
                 backgroundColor: Colors.red,
@@ -66,7 +69,7 @@ class BuildListView extends StatelessWidget {
           ),
           child: ListTile(
             onTap: () async {
-              onNoteTap(note);
+              widget.onNoteTap(note);
             },
             leading: const Icon(Icons.newspaper),
             title: Text(
@@ -156,10 +159,51 @@ class BuildListView extends StatelessWidget {
     );
   }
 
+  void _showDeleteConfirmationDialog(BuildContext context, Map<String, Object> note) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete note"),
+          content: const Text("Are you sure you want to delete this note?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Call onDeleteNote callback to delete the note
+                widget.onDeleteNote(note);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Note deleted'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        // Restore the deleted note
+                        widget.onRestoreNote(note);
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: notes.map((e) => _buildNoteTileForListView(e)).toList(),
+      children: widget.notes.map((e) => _buildNoteTileForListView(e)).toList(),
     );
   }
 }
