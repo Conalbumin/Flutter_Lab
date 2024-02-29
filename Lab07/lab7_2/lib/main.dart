@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onUpdateNotes: () {
           setState(() {});
         },
+        isProtected: isProtected,
         onRestoreNote: onRestoreNote,
         isListView: isListView, // Pass isListView to Home widget
       ),

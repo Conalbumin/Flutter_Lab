@@ -6,6 +6,7 @@ class BuildGridView extends StatefulWidget {
   final Function(Map<String, Object>) onDeleteNote;
   final Function() onUpdateNotes;
   final Function(Map<String, Object>) onRestoreNote;
+  final bool isProtected;
 
   BuildGridView({
     required this.notes,
@@ -13,6 +14,7 @@ class BuildGridView extends StatefulWidget {
     required this.onDeleteNote,
     required this.onUpdateNotes,
     required this.onRestoreNote,
+    required this.isProtected
   });
 
   @override
@@ -31,8 +33,6 @@ class _BuildGridViewState extends State<BuildGridView> {
   }
 
   Widget _buildNoteTileForGridView(Map<String, Object> note) {
-    bool isProtected = false;
-
     return Builder(
       builder: (context) => Stack(
         children: [
@@ -73,9 +73,8 @@ class _BuildGridViewState extends State<BuildGridView> {
               ),
             ),
           ),
-          if (isProtected)
-            Positioned(
-              top: 5,
+          if (note['isProtected'] == true) // Check if the note is protected
+            const Positioned(
               left: 5,
               child: Icon(Icons.lock, color: Colors.black),
             ),

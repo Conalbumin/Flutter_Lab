@@ -7,6 +7,7 @@ class BuildListView extends StatefulWidget {
   final Function(Map<String, Object>) onDeleteNote;
   final Function() onUpdateNotes;
   final Function(Map<String, Object>) onRestoreNote;
+  final bool isProtected;
 
   BuildListView({
     required this.notes,
@@ -14,6 +15,7 @@ class BuildListView extends StatefulWidget {
     required this.onDeleteNote,
     required this.onUpdateNotes,
     required this.onRestoreNote,
+    required this.isProtected
   });
 
   @override
@@ -22,6 +24,7 @@ class BuildListView extends StatefulWidget {
 
 class _BuildListViewState extends State<BuildListView> {
   bool isProtected = false;
+  bool isNoteProtected = false;
 
   Widget _buildNoteTileForListView(Map<String, Object> note) {
     return StatefulBuilder(
@@ -38,25 +41,25 @@ class _BuildListViewState extends State<BuildListView> {
                 icon: Icons.delete,
                 backgroundColor: Colors.red,
               ),
-              if (isProtected)
+              if (note['isProtected'] == true)
                 SlidableAction(
                   label: 'Change password',
                   onPressed: (context) {},
                   icon: Icons.change_circle,
                   backgroundColor: Colors.blue,
                 ),
-              if (isProtected)
+              if (note['isProtected'] == true)
                 SlidableAction(
                   label: 'Unlock',
                   onPressed: (context) {
                     setState(() {
-                      isProtected = !isProtected;
+                      note['isProtected'] = false;
                     });
                   },
                   icon: Icons.lock_open,
                   backgroundColor: Colors.orange,
                 ),
-              if (!isProtected)
+              if (note['isProtected'] == false)
                 SlidableAction(
                   label: 'Protect',
                   onPressed: (context) {
@@ -85,15 +88,14 @@ class _BuildListViewState extends State<BuildListView> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            trailing: isProtected ? const Icon(Icons.lock) : null,
+            trailing: note['isProtected'] == true ? const Icon(Icons.lock) : null,
           ),
         );
       },
     );
   }
 
-  void _showDialogSetPassword(
-      BuildContext context, Map<String, Object> note) {
+  void _showDialogSetPassword(BuildContext context, Map<String, Object> note) {
     TextEditingController passwordController = TextEditingController();
     TextEditingController confirmPasswordController = TextEditingController();
 
@@ -140,13 +142,13 @@ class _BuildListViewState extends State<BuildListView> {
                     if (password == confirmPassword) {
                       // Passwords match, protect the note
                       setState(() {
-                        isProtected = true;
+                        note['isProtected'] = true; // Set isProtected for the specific note
                       });
                       Navigator.of(context).pop();
+                      widget.onUpdateNotes();
+                      print(note['isProtected']);
                     } else {
-                      // Passwords don't match, show error message or handle accordingly
                       print('Passwords do not match');
-                      // Show error message or handle accordingly
                     }
                   },
                   child: const Text('Confirm'),
@@ -177,7 +179,6 @@ class _BuildListViewState extends State<BuildListView> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // Call onDeleteNote callback to delete the note
                 widget.onDeleteNote(note);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -185,7 +186,6 @@ class _BuildListViewState extends State<BuildListView> {
                     action: SnackBarAction(
                       label: 'Undo',
                       onPressed: () {
-                        // Restore the deleted note
                         widget.onRestoreNote(note);
                       },
                     ),
