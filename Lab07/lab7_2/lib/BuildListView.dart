@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import 'EditScreen.dart';
+
 class BuildListView extends StatefulWidget {
   final List<Map<String, Object>> notes;
   final Function(Map<String, Object>) onNoteTap;
@@ -82,7 +84,21 @@ class _BuildListViewState extends State<BuildListView> {
           ),
           child: ListTile(
             onTap: () async {
-              widget.onNoteTap(note);
+              if (note['isProtected'] == true) {
+                // Note is locked, show a message or take other action to inform the user
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Note is locked'),
+                  ),
+                );
+              } else {
+                // Note is not locked, allow navigation
+                final editedNote = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (ctx) => EditScreen(note: note)),
+                );
+                widget.onNoteTap(note);
+              }
             },
             leading: const Icon(Icons.newspaper),
             title: Text(

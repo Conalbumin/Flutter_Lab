@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'EditScreen.dart';
+
 class BuildGridView extends StatefulWidget {
   final List<Map<String, Object>> notes;
   final Function(Map<String, Object>) onNoteTap;
@@ -44,7 +46,21 @@ class _BuildGridViewState extends State<BuildGridView> {
             child: Card(
               child: InkWell(
                 onTap: () async {
-                  widget.onNoteTap(note);
+                  if (note['isProtected'] == true) {
+                    // Note is locked, show a message or take other action to inform the user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Note is locked'),
+                      ),
+                    );
+                  } else {
+                    // Note is not locked, allow navigation
+                    final editedNote = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (ctx) => EditScreen(note: note)),
+                    );
+                    widget.onNoteTap(note);
+                  }
                 },
                 child: Container(
                   color: Colors.yellow,
