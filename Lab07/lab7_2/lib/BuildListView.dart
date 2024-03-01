@@ -23,6 +23,9 @@ class BuildListView extends StatefulWidget {
 }
 
 class _BuildListViewState extends State<BuildListView> {
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController enterPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   bool isProtected = false;
   bool isNoteProtected = false;
 
@@ -53,7 +56,7 @@ class _BuildListViewState extends State<BuildListView> {
                   label: 'Unlock',
                   onPressed: (context) {
                     setState(() {
-                      note['isProtected'] = false;
+                      _showDialogAskPassword(context, note);
                     });
                   },
                   icon: Icons.lock_open,
@@ -96,9 +99,6 @@ class _BuildListViewState extends State<BuildListView> {
   }
 
   void _showDialogSetPassword(BuildContext context, Map<String, Object> note) {
-    TextEditingController passwordController = TextEditingController();
-    TextEditingController confirmPasswordController = TextEditingController();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -142,11 +142,65 @@ class _BuildListViewState extends State<BuildListView> {
                     if (password == confirmPassword) {
                       // Passwords match, protect the note
                       setState(() {
-                        note['isProtected'] = true; // Set isProtected for the specific note
+                        note['isProtected'] = true;
                       });
                       Navigator.of(context).pop();
                       widget.onUpdateNotes();
-                      print(note['isProtected']);
+                    } else {
+                      print('Passwords do not match');
+                    }
+                  },
+                  child: const Text('Confirm'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showDialogAskPassword(BuildContext context, Map<String, Object> note) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text("Password"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: enterPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter your password',
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // Handle confirm action here
+                    String enterPassword = enterPasswordController.text;
+                    String password = passwordController.text;
+                    print(enterPassword);
+                    print(password);
+                    // Check if passwords match
+                    if (enterPassword == password) {
+                      setState(() {
+                        note['isProtected'] = false;
+                      });
+                      Navigator.of(context).pop();
+                      widget.onUpdateNotes();
                     } else {
                       print('Passwords do not match');
                     }
