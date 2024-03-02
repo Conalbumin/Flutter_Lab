@@ -24,7 +24,14 @@ class BuildGridView extends StatefulWidget {
 }
 
 class _BuildGridViewState extends State<BuildGridView> {
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController enterPasswordControllerinUnlock = TextEditingController();
+  TextEditingController enterPasswordControllerinChange = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController confirmPasswordControllerinChange = TextEditingController();
   bool isProtected = false;
+  bool isNoteProtected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -118,22 +125,25 @@ class _BuildGridViewState extends State<BuildGridView> {
                       Navigator.of(context).pop();
                       _showDeleteConfirmationDialog(context, note);
                     }),
-                    const Divider(), // Divider between rows
-                    if (!this.isProtected) // If note is not protected
+                    const Divider(),
+                    if (note['isProtected'] == false)
                       buildOptionBottomSheet(Icons.lock, "Protect this note", () {
-                        // Call _showDialogSetPassword when Protect is tapped
-                        _showDialogSetPassword(context, note);
+                        setState(() {
+                          _showDialogSetPassword(context,note);
+                        });
                       }),
-                    if (this.isProtected) // If note is protected
+                    if (note['isProtected'] == true)
                       buildOptionBottomSheet(Icons.change_circle, "Change password", () {
-                        // Handle change password action here
+                        setState(() {
+                          _showDialogChangePassword(context,note);
+                        });
                       }),
-                    const Divider(), // Divider between rows
+                    const Divider(),
 
-                    if (this.isProtected) // If note is protected
+                    if (note['isProtected'] == true)
                       buildOptionBottomSheet(Icons.lock_open, "Remove password", () {
                         setState(() {
-                          this.isProtected = false;
+                          _showDialogAskPassword(context,note);
                         });
                       }),
                   ],
@@ -217,6 +227,137 @@ class _BuildGridViewState extends State<BuildGridView> {
                       // Passwords don't match, show error message or handle accordingly
                       print('Passwords do not match');
                       // Show error message or handle accordingly
+                    }
+                  },
+                  child: const Text('Confirm'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showDialogAskPassword(BuildContext context, Map<String, Object> note) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text("Password"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: enterPasswordControllerinUnlock,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter your password',
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // Handle confirm action here
+                    String enterPassword = enterPasswordControllerinUnlock.text;
+                    String password = passwordController.text;
+                    // Check if passwords match
+                    if (enterPassword == password) {
+                      setState(() {
+                        note['isProtected'] = false;
+                      });
+                      Navigator.of(context).pop();
+                      widget.onUpdateNotes();
+                    } else {
+                      print('Passwords do not match');
+                    }
+                  },
+                  child: const Text('Confirm'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showDialogChangePassword(BuildContext context, Map<String, Object> note) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text("Change Password"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: enterPasswordControllerinChange,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Old Password',
+                    ),
+                  ),
+                  TextField(
+                    controller: newPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'New Password',
+                    ),
+                  ),
+                  TextField(
+                    controller: confirmPasswordControllerinChange,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm Password',
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // Handle confirm action here
+                    String enterPassword = enterPasswordControllerinChange.text;
+                    String oldPassword = passwordController.text;
+                    String newPassword = newPasswordController.text;
+                    String confirmPassword = confirmPasswordControllerinChange.text;
+
+                    // Passwords match, protect the note
+                    print("enterPassword $enterPassword");
+                    print("oldPassword $oldPassword");
+                    print("newPassword $newPassword");
+                    print("confirmPassword $confirmPassword");
+                    // Check if passwords match
+                    if (enterPassword == oldPassword) {
+                      if (newPassword == confirmPassword) {
+                        setState(() {
+                          passwordController.text = newPassword; // Update password here
+                        });
+                        print("oldPassword updated: ${passwordController.text}");
+                      }
+                      Navigator.of(context).pop();
+                      widget.onUpdateNotes();
+                    } else {
+                      print('Passwords do not match');
                     }
                   },
                   child: const Text('Confirm'),
