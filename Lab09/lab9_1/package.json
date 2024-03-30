@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "json-server": "^1.0.0-alpha.23"
+  },
+  "name": "lab9_1",
+  "description": "A new Flutter project.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "run-server": "json-server --host 10.0.2.2 data.json"
+  },
+  "author": "",
+  "license": "ISC"
+}
