@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:dio/dio.dart';
 
+import 'api_service.dart';
+
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -30,17 +32,46 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> fetchUsers() async {
     try {
-      final response = await Dio().get('http://10.0.2.2:3000/users');
-      if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
-        setState(() {
-          users = List<Map<String, dynamic>>.from(data);
-        });
-      } else {
-        throw Exception('Failed to load users');
-      }
+      List<Map<String, dynamic>> data = await ApiService.getUsers();
+      setState(() {
+        users = data;
+      });
     } catch (e) {
       print('Error fetching users: $e');
+      // Handle error as needed
+    }
+  }
+
+  void addUser(Map<String, dynamic> user) async {
+    try {
+      Map<String, dynamic> addedUser = await ApiService.addUser(user);
+      setState(() {
+        users.add(addedUser);
+      });
+    } catch (e) {
+      print('Error adding user: $e');
+      // Handle error as needed
+    }
+  }
+
+  void updateUser(String id, Map<String, dynamic> user) async {
+    try {
+      await ApiService.updateUser(id, user);
+      fetchUsers(); // Refresh the user list
+    } catch (e) {
+      print('Error updating user: $e');
+      // Handle error as needed
+    }
+  }
+
+  void deleteUser(String id) async {
+    try {
+      await ApiService.deleteUser(id);
+      setState(() {
+        users.removeWhere((user) => user['id'] == id);
+      });
+    } catch (e) {
+      print('Error deleting user: $e');
       // Handle error as needed
     }
   }

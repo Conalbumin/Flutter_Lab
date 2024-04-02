@@ -7,7 +7,7 @@ import 'date_picker.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: Date_Picker(),
+    home: Simple(),
   ));
 }
 

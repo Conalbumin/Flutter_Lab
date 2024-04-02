@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
-class AddUserScreen extends StatefulWidget {
-  const AddUserScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddUserScreen> createState() => _AddUserScreen();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 const space = SizedBox(
   height: 16,
 );
 
-class _AddUserScreen extends State<AddUserScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   var _form = GlobalKey<FormState>();
-  String fullName = '', jobTitle = '';
+  String fullName = '';
 
-  void _submitForm() {
+  void _submitForm(BuildContext context) {
     if (_form.currentState?.validate() ?? false) {
       _form.currentState?.save();
       print(fullName);
-      print(jobTitle);
-      Navigator.pop(context);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ChatScreen(userName: fullName)),
+      );
     } else {
       print('Invalid form');
     }
@@ -29,9 +32,7 @@ class _AddUserScreen extends State<AddUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-          title: const Text('Create a new User', style: TextStyle(color: Colors.white),)),
+      appBar: AppBar(title: const Text('WebSocket Chat', style: TextStyle(color: Colors.white),), backgroundColor: Colors.blue,),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(30),
@@ -43,7 +44,7 @@ class _AddUserScreen extends State<AddUserScreen> {
                 height: 16,
               ),
               Text(
-                'User Information',
+                'Join the ChatRoom',
                 style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -59,7 +60,7 @@ class _AddUserScreen extends State<AddUserScreen> {
                 validator: (v) {
                   if (v?.trim().isEmpty ?? true) {
                     return 'Please enter full name';
-                  } else if (v!.length < 6) {
+                  } else if (v!.length < 4) {
                     return 'User name is too short';
                   }
                   return null;
@@ -67,37 +68,18 @@ class _AddUserScreen extends State<AddUserScreen> {
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.account_box),
                   border: OutlineInputBorder(),
-                  hintText: 'Enter your user name',
-                  label: Text('Full Name'),
-                ),
-              ),
-              space,
-              TextFormField(
-                onSaved: (v) => jobTitle = v ?? '',
-                validator: (v) {
-                  if (v?.trim().isEmpty ?? true) {
-                    return 'Please enter job title';
-                  } else if (v!.length < 4) {
-                    return 'Job title is too short';
-                  }
-                  return null;
-                },
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.title),
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter job title',
-                  label: Text('Job Title'),
+                  hintText: 'Enter your display name',
+                  labelText: 'Full Name', // Changed from label to labelText
                 ),
               ),
               space,
               ElevatedButton(
                 style:
-                    ElevatedButton.styleFrom(minimumSize: Size.fromHeight(50)),
-                onPressed: _submitForm,
+                ElevatedButton.styleFrom(minimumSize: Size.fromHeight(50), backgroundColor: Colors.blue),
+                onPressed: () => _submitForm(context), // Pass context to _submitForm
                 child: Text(
-                  'Register',
-                  style: TextStyle(fontSize: 18),
+                  'Chat Now',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               )
             ]),
