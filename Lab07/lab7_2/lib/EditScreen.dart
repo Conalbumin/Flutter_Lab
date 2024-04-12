@@ -33,13 +33,19 @@ class _EditScreenState extends State<EditScreen> {
   void _saveForm() {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
-      final newNote = {'id': widget.note?['id'] ?? UniqueKey().toString(), 'title': _title, 'content': _content}; // Ensure each note has an ID
-      Navigator.pop(context, newNote); // Pass the edited note back
-      _showSnackbar('Note ${widget.note != null ? 'updated' : 'added'} successfully!');
+      final newNote = {
+        'id': widget.note?['id'] ?? UniqueKey().toString(),
+        'title': _title,
+        'content': _content
+      }; // Ensure each note has an ID
+
+      // Show confirmation dialog
+      _showConfirmationEditDialog(context, newNote);
     } else {
       _focus.requestFocus();
     }
   }
+
 
   void _showSnackbar(String message) {
     ScaffoldMessengerState? scaffoldState = ScaffoldMessenger.maybeOf(context);
@@ -132,4 +138,42 @@ class _EditScreenState extends State<EditScreen> {
       ),
     );
   }
+
+  void _showConfirmationEditDialog(BuildContext context, Map<String, Object> note) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Save changes"),
+          content: const Text("Note is modified, do you want to continue editing?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Save changed'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

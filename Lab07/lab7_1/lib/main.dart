@@ -23,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   int age = 18;
   String country = '';
   String job = '';
+  String _selectedJob = '';
   bool obscurePassword = true;
   final FocusNode _nameFocus = FocusNode();
   bool _isLoading = false;
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -205,8 +207,11 @@ class _MyAppState extends State<MyApp> {
                               title: const Text('Select your job'),
                               content: RadioListTileExample(
                                 onSelected: (value) {
-                                  Navigator.of(context).pop(value); // Close dialog and return the selected job
+                                  setState(() {
+                                    job = value; // Update job value
+                                  });
                                 },
+                                initialJob: job, // Pass initial selected job
                               ),
                             );
                           },
